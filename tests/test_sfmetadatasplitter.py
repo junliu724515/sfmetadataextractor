@@ -40,4 +40,4 @@ def test_extractor():
 
 def teardown_function():
     """remove the output file"""
-    os.remove("output.wsdl")
+    os.remove("tests/output.wsdl")

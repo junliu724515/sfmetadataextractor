@@ -4,12 +4,7 @@
 import xml.etree.ElementTree as ET
 import typer
 
-from sfmetadataextractor.utils import get_attrib_value, write_to_file
-
-# Forming the namespace for XML elements
-NS = "{http://www.w3.org/2001/XMLSchema}"
-NS_WSDL = "{http://schemas.xmlsoap.org/wsdl/}"
-
+from sfmetadataextractor.utils import NS_WSDL, NS, get_attrib_value, write_to_file
 
 class ExtractorHandler:
     """
