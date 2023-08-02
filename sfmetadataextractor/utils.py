@@ -10,7 +10,7 @@ def get_attrib_value(element, attrib, prefix_len=0) -> str:
     val = element.attrib.get(attrib)
     if val and len(val) > prefix_len:
         return val[prefix_len:]
-    return None
+    return ''
 
 
 def write_to_file(out_file: str, contents: bytes) -> None:

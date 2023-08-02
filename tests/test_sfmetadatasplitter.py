@@ -6,6 +6,7 @@ from typer.testing import CliRunner
 
 from sfmetadataextractor import __app_name__, __version__, cli
 from sfmetadataextractor.utils import get_attrib_value
+import filecmp
 
 
 runner = CliRunner()
@@ -32,12 +33,16 @@ def test_get_element_name():
 
 def test_extractor():
     """test extractor"""
-    result = runner.invoke(cli.app, ["extract --help"])
-    # assert result.exit_code == 0
-    print(result.stdout)
-    assert f"Flow,PermissionSet,CustomObject,CustomField,RecordType metadata types extracted successfully and saved in output\n" in result.stdout
+    result = runner.invoke(cli.app, ["extract", "-i", "../Metadata.wsdl", "-o", "output.wsdl", "-m", "Flow"])
+    assert result.exit_code == 0
+    # print(result.stdout)
+    assert f"Flow metadata types extracted successfully and saved in output.wsdl\n" in result.stdout
+    f1 = "output-test.wsdl"
+    f2 = "output.wsdl"
+    assert filecmp.cmp(f1, f2, shallow=True) == True
+    os.remove("output.wsdl")
 
 
 def teardown_function():
     """remove the output file"""
-    os.remove("tests/output.wsdl")
+    # os.remove("output.wsdl")
