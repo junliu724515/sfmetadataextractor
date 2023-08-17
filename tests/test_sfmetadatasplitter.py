@@ -50,7 +50,8 @@ def test_extensionMapping():
     assert f"Metadata extensions extracted successfully and saved in mapping.json\n" in result.stdout
     f1 = "mapping.json"
     f2 = "test_files/mapping-test.json"
-    assert filecmp.cmp(f1, f2, shallow=True) == True
+    with open(f1, 'r') as file1, open(f2, 'r') as file2:
+        assert file1.readlines() == file2.readlines(), "Files content is not the same"
     os.remove("mapping.json")
 
 def test_patch():

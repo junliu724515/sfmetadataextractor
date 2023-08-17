@@ -1,8 +1,6 @@
 # ProjectX
 
-![Project Logo](path_to_logo_image)
-
-A brief tagline or description of what this project does.
+This is a python command line tool to split/extract components from Salesforce metadata wsdl file
 
 ---
 
@@ -18,34 +16,107 @@ A brief tagline or description of what this project does.
 
 ## Installation
 
-**1.** Clone this repository:
+**1.** Clone/Build/Install this repository:
 
+```bash
+git clone https://github.com/junliu724515/sfmetadataextractor.git
+
+python setup.py sdist bdist_wheel
+
+pip install dist/sfmetadataextractor-0.1.0-py3-none-any.whl
+```   
 
 
 **2.** Navigate to the project directory:
 
+The following files are included in this project:
 
+- README.md
+- setup.py
+- sfmetadataextractor/__init__.py
+- sfmetadataextractor/__main__.py
+- sfmetadataextractor/class_patch.py
+- sfmetadataextractor/cli.py
+- sfmetadataextractor/extension_mapping.py
+- sfmetadataextractor/extractor.py
+- sfmetadataextractor/utils.py
+- tests/__init__.py
+- tests/test_sfmetadatasplitter.py
 
-**Note:** This project requires [Node.js](https://nodejs.org/).
+**Note:** This project requires [Python](https://www.python.org/).
 
 ---
 
 ## Usage
 
-Here's a brief explainer on how to use ProjectX:
+**1.** Command to extract metadata component:
 
 ```bash
-node app.js [arguments]
+python sfmetadataextractor extract --help
+  Usage: python sfmetadataextractor extract [OPTIONS]
+
+  Extract selected metadata types from Salesforce Metadata WSDL file.
+
+Options:
+  -i, --inputFile TEXT      The input metadata wsdl file to process.
+                            [required]
+  -o, --outputFile TEXT     The output wsdl file with the metadata extracted.
+                            [required]
+  -m, --MetadataTypes TEXT  Comma-separated list of metadataTypes to be
+                            extracted, for example: ApexClass,CustomObject
+                            [required]
+  --help                    Show this message and exit.
+
+
+Example
+
+    python sfmetadataextractor extract -i metadata.wsdl -o metadata_extracted.wsdl -m ApexClass,CustomObject
 ```
 
+**2.** Command to create an extension mapping file for apex class patching:
 
+```bash
+Usage: python sfmetadataextractor extensionMap [OPTIONS]
 
-For more detailed information and options, please refer to our Wiki or the --help command.
+  Extract metadata extensions from Salesforce Metadata WSDL file.
+
+Options:
+  -i, --inputFile TEXT   The input metadata wsdl file to process.  [required]
+  -o, --outputFile TEXT  The output metadata extension mapping file.
+                         [required]
+  --help                 Show this message and exit.
+
+Example:
+   python sfmetadataextractor extensionMap -i metadata.wsdl -o extension_mapping.json
+```
+
+**3.** Command to patch apex class with extension mapping file:
+
+```bash
+Usage: python sfmetadataextractor patch [OPTIONS]
+
+  Patch apex class with the metadata extensions.
+
+Options:
+  -e, --extensionMapFile TEXT  The extention map file to read all metadata
+                               extensions for the patching  [required]
+  -i, --inputFile TEXT         The input apex class file to process.
+                               [required]
+  -o, --outputFile TEXT        The output apex patched file.  [required]
+  -a, --apiVersion TEXT        api version to be used for the patching, for
+                               example: 58.0  [required]
+  --help                       Show this message and exit.
+  
+Example:
+   python sfmetadataextractor patch -e extension_mapping.json -i MetadataServiceImported.cls -o MetadataService.cls -a 58.0
+```
+
+Please refer to the --help command.
 
 **Features**
-- Feature 1: Short description about this feature.
-- Feature 2: Another description.
-- Feature 3: Yet another feature.
+- Feature 1: Extract the components selected from Salesforce Metadata wsdl file.
+- Feature 2: Generate extension mapping file, that is required for patching the apex class generated from wsdl file from feature 1.
+- Feature 3: Patch the apex class generated with the mapping file.
 
 **Contributing**
 - We welcome contributions from the community! Please read our contributing guidelines before submitting a pull request.
@@ -53,28 +124,6 @@ For more detailed information and options, please refer to our Wiki or the --hel
 License
 This project is licensed under the MIT License. See LICENSE for more details.
 
-Acknowledgements
-Name (For the awesome logo design)
-Another Name (For code contributions)
 Contact
-For questions or feedback, please reach out to your_name@email.com.
+For questions or feedback, please reach out to jun.liu@jmcloudservices.com.
 
-
-
-
-
-
-
-
-
-
-
-**Points to Note:**
-
-- Replace placeholders like "your_username", "ProjectX", "path_to_logo_image", etc. with appropriate values for your project.
-- The example assumes that your project is using Node.js and npm, but you can adjust the installation and usage instructions based on your tech stack.
-- If your project doesn't have a logo, contributing guidelines, or a separate license file, you can omit those parts.
-- The acknowledgements and contact sections are optional but can be useful for giving credit and providing a point of contact.
-- You can expand the "Features" section as necessary and even add screenshots or GIFs to make it more visual.
-
-A well-crafted README can greatly enhance the visibility and understandability of your project. Ensure it is clear, concise, and provides all the necessary information a potential user or contributor might need.

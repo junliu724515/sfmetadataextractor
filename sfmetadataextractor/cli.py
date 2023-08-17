@@ -64,6 +64,7 @@ def patch_metadata(
             "-a",
             help="api version to be used for the patching, for example: 58.0"),
 ):
+    """Patch apex class with the metadata extensions."""
     typer.echo(f"Patching apex class in {input_file}")
     class_patch_handler = class_patch.ClassPatch(extension_map_file, input_file, output_file, api_version)
     class_patch_handler.patch()
