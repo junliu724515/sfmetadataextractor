@@ -1,4 +1,4 @@
-# ProjectX
+# sfmetadataextractor
 
 This is a python command line tool to split/extract components from Salesforce metadata wsdl file
 
