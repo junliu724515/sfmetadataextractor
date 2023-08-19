@@ -5,7 +5,7 @@ from typing import Optional
 
 import typer
 
-from sfmetadataextractor import __app_name__, __version__, class_patch, extension_mapping, extractor
+from sfmetadataextractor import __app_name__, __version__, class_patch, extension_mapping, extractor, generate_tests
 
 app = typer.Typer()
 
@@ -95,6 +95,24 @@ def extension_map(
     typer.echo(
         f"Metadata extensions extracted successfully and saved in {output_file}")
 
+@app.command(name="generateUnitTests")
+def generate_unit_test(
+        input_file: str = typer.Option(
+            ...,
+            "--inputFile",
+            "-i",
+            help="The input apex class."),
+        output_file: str = typer.Option(
+            ...,
+            "--outputFile",
+            "-o",
+            help="The output unit test class file."),
+):
+    typer.echo(f"Generating unit tests for {input_file}")
+    generate_tests_handler = generate_tests.generateTests(input_file, output_file)
+    generate_tests_handler.generate()
+    typer.echo(
+        f"Unit tests generated successfully and saved in {output_file}")
 
 def _version_callback(value: bool) -> None:
     if value:

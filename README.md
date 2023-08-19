@@ -21,11 +21,15 @@ This is a python command line tool to split/extract components from Salesforce m
 ```bash
 git clone https://github.com/junliu724515/sfmetadataextractor.git
 
-python setup.py sdist bdist_wheel
+python -m pip install . (In the project folder)
 
-pip install dist/sfmetadataextractor-0.1.0-py3-none-any.whl
-```   
+```
 
+## Uninstallation
+
+```bash
+ pip uninstall sfmetadataextractor
+```
 
 **2.** Navigate to the project directory:
 
@@ -111,7 +115,24 @@ Example:
    python sfmetadataextractor patch -e extension_mapping.json -i MetadataServiceImported.cls -o MetadataService.cls -a 58.0
 ```
 
+**4.** Command to generate unit tests:
+
+```bash
+Usage: sfmetadataextractor generateUnitTests [OPTIONS]
+
+Options:
+  -i, --inputFile TEXT   The input apex class.  [required]
+  -o, --outputFile TEXT  The output unit test class file.  [required]
+  --help                 Show this message and exit.
+
+
+Example:
+   python sfmetadataextractor generateUnitTests -i MetadataService.cls -o MetadataServiceTest.cls
+
+```
+
 Please refer to the --help command.
+
 
 **Features**
 - Feature 1: Extract the components selected from Salesforce Metadata wsdl file.
@@ -119,7 +140,7 @@ Please refer to the --help command.
 - Feature 3: Patch the apex class generated with the mapping file.
 
 **Contributing**
-- We welcome contributions from the community! Please read our contributing guidelines before submitting a pull request.
+- I welcome contributions from the community! Please read our contributing guidelines before submitting a pull request.
 
 License
 This project is licensed under the MIT License. See LICENSE for more details.
