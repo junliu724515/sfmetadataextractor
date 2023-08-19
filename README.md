@@ -21,6 +21,8 @@ This is a python command line tool to split/extract components from Salesforce m
 ```bash
 git clone https://github.com/junliu724515/sfmetadataextractor.git
 
+cd sfmetadataextractor/
+
 python -m pip install . (In the project folder)
 
 ```
