@@ -137,7 +137,7 @@ Please refer to the --help command.
 **Features**
 - Feature 1: Extract the components selected from Salesforce Metadata wsdl file.
 - Feature 2: Generate extension mapping file, that is required for patching the apex class generated from wsdl file from feature 1.
-- Feature 3: Patch the apex class generated with the mapping file.
+- Feature 3: Patch the apex class generated with the mapping file and generate unit tests.
 
 **Contributing**
 - I welcome contributions from the community! Please read our contributing guidelines before submitting a pull request.
