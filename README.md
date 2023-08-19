@@ -133,7 +133,7 @@ Example:
 
 ```
 
-Please refer to the --help command.
+For more details, Please refer to the --help command or my blog post https://jmcloudservices.com/blog/a-python-tool-to-upgrade-apex-wrapper-salesforce-metadata-api.
 
 
 **Features**
