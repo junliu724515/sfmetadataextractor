@@ -163,7 +163,7 @@ class ClassPatch:
                             if baseclass_name in self.metadata_extensions_dict.keys():
                                 baseclass_name = self.metadata_extensions_dict[baseclass_name]
                             else:
-                                break;
+                                break
                         # print(base_types)
                         for baseclass_name in base_types:
                             if baseclass_name in self.type_body_by_base_class.keys():
@@ -184,7 +184,7 @@ class ClassPatch:
                                     self.new_lines.append(base_class_line)
                         while True:
                             line = f.readline()
-                            trimmed_line = line.strip();
+                            trimmed_line = line.strip()
                             if 'MetadataServiceImported' in trimmed_line:
                                 line = line.replace('MetadataServiceImported', 'MetadataService')
                             # Adjust the fields listed in the field_order_type_info metadata
@@ -200,7 +200,9 @@ class ClassPatch:
                                     line = line.replace('new String[]{', 'new String[]{' + new_field_order_type + ', ')
                                 self.new_lines.append(line)
                                 break
-                            self.new_lines.append(line)
+                            # remove duplicate fields from the base class
+                            if line not in self.new_lines:
+                                self.new_lines.append(line)
                         continue
                 self.new_lines.append(line)
                 if not line:
