@@ -200,9 +200,7 @@ class ClassPatch:
                                     line = line.replace('new String[]{', 'new String[]{' + new_field_order_type + ', ')
                                 self.new_lines.append(line)
                                 break
-                            # remove duplicate fields from the base class
-                            if line not in self.new_lines:
-                                self.new_lines.append(line)
+                            self.new_lines.append(line)
                         continue
                 self.new_lines.append(line)
                 if not line:
