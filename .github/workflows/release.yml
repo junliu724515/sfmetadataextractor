@@ -1,0 +1,86 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - 'beta/**'
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-test-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        node-version: 20.x
+        fetch-depth: 0
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install setuptools wheel  # Install setuptools and wheel
+        pip install -r requirements.txt
+        pip install pytest  # Install pytest explicitly
+
+    - name: Run tests
+      run: |
+        cd tests
+        python -m pytest
+
+    - name: Determine release type
+      id: release_type
+      run: |
+        if [[ ${{ github.ref }} == refs/heads/main ]]; then
+          echo "type=release" >> $GITHUB_OUTPUT
+        elif [[ ${{ github.ref }} == refs/heads/beta/* ]]; then
+          echo "type=beta" >> $GITHUB_OUTPUT
+        else
+          echo "type=development" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Bump version and push tag
+      id: tag_version
+      uses: mathieudutour/github-tag-action@v6.1
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        default_bump: patch
+        release_branches: main
+        pre_release_branches: beta/*
+        append_to_pre_release_tag: beta
+        tag_prefix: v
+
+    - name: Build package
+      run: python setup.py sdist bdist_wheel
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.tag_version.outputs.new_tag }}
+        release_name: ${{ steps.release_type.outputs.type == 'beta' && 'Beta' || 'Release' }} ${{ steps.tag_version.outputs.new_tag }}
+        body: ${{ steps.tag_version.outputs.changelog }}
+        draft: false
+        prerelease: ${{ steps.release_type.outputs.type == 'beta' }}
+
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./dist/*
+        asset_name: my-cli-tool-${{ steps.tag_version.outputs.new_tag }}.tar.gz
+        asset_content_type: application/gzip
