@@ -77,6 +77,13 @@ jobs:
     - name: List dist contents
       run: ls -l dist/
 
+    - name: Commit version changes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add setup.py sfmetadataextractor/__init__.py
+        git commit -m "Bump version to ${{ steps.tag_version.outputs.new_tag }}"
+
     # - name: Create Release
     #   id: create_release
     #   uses: actions/create-release@v1
