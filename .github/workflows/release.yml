@@ -67,9 +67,9 @@ jobs:
         VERSION=$(echo ${{ steps.tag_version.outputs.new_tag }} | sed 's/^v//')
         echo $VERSION
         # Update version in setup.py (adjust this command based on your actual file)
-        sed -i "s/version='.*'/version='$VERSION'/" setup.py
+        sed -i "s/version=\".*\"/version=\"$VERSION\"/" setup.py
         # If you have a __version__ in your main package file, update it too
-        sed -i "s/__version__ = '.*'/__version__ = '$VERSION'/" sfmetadataextractor/__init__.py
+        sed -i "s/__version__ = \".*\"/__version__ = \"$VERSION\"/" sfmetadataextractor/__init__.py
 
     - name: Build package
       run: python setup.py sdist bdist_wheel
