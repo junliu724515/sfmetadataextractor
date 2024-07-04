@@ -65,7 +65,7 @@ jobs:
       run: |
         # Remove 'v' prefix from the tag
         VERSION=$(echo ${{ steps.tag_version.outputs.new_tag }} | sed 's/^v//')
-        echo %VERSION
+        echo $VERSION
         # Update version in setup.py (adjust this command based on your actual file)
         sed -i "s/version='.*'/version='$VERSION'/" setup.py
         # If you have a __version__ in your main package file, update it too
