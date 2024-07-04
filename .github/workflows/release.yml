@@ -79,10 +79,16 @@ jobs:
 
     - name: Commit version changes
       run: |
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
+        git config --local user.email "github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
         git add setup.py sfmetadataextractor/__init__.py
-        git commit -m "Bump version to ${{ steps.tag_version.outputs.new_tag }}"
+        git diff --quiet && git diff --staged --quiet || git commit -m "Bump version to ${{ steps.tag_version.outputs.new_tag }} [skip ci]"
+
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: ${{ github.ref }}
 
     # - name: Create Release
     #   id: create_release
