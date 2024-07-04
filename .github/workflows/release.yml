@@ -37,6 +37,7 @@ jobs:
       run: |
         cd tests
         python -m pytest
+        cd ..
 
     - name: Determine release type
       id: release_type
