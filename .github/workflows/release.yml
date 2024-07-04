@@ -108,6 +108,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: dist/*
-        asset_name: my-cli-tool-${{ steps.tag_version.outputs.new_tag }}.tar.gz
-        asset_content_type: application/gzip
+        asset_path: ./dist/*.whl
+        asset_name: sfmetadataextractor-${{ steps.tag_version.outputs.new_tag }}-py3-none-any.whl
+        asset_content_type: application/octet-stream
