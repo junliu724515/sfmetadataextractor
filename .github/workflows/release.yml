@@ -64,6 +64,9 @@ jobs:
     - name: Build package
       run: python setup.py sdist bdist_wheel
 
+    - name: List dist contents
+      run: ls -l dist/
+
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
@@ -75,6 +78,9 @@ jobs:
         body: ${{ steps.tag_version.outputs.changelog }}
         draft: false
         prerelease: ${{ steps.release_type.outputs.type == 'beta' }}
+        files: |
+          dist/*.tar.gz
+          dist/*.whl
 
     - name: Upload Release Asset
       uses: actions/upload-release-asset@v1
