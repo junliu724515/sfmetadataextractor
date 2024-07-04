@@ -2,4 +2,4 @@
 # sfmetadataextractor/__init__.py
 
 __app_name__ = "sfmetadataextractor"
-__version__ = "0.1.0"
+__version__ = "0.1.2-beta.5"
