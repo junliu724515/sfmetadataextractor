@@ -75,7 +75,9 @@ jobs:
       run: python setup.py sdist bdist_wheel
 
     - name: List dist contents
-      run: ls -l dist/
+      run: |
+        ASSET_PATH=$(echo dist/*.whl)
+        echo $ASSET_PATH
 
     - name: Commit version changes
       run: |
@@ -108,6 +110,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./dist/*.whl
+        asset_path: $(ASSET_PATH)
         asset_name: sfmetadataextractor-${{ steps.tag_version.outputs.new_tag }}-py3-none-any.whl
         asset_content_type: application/octet-stream
