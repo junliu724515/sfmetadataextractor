@@ -61,6 +61,15 @@ jobs:
         append_to_pre_release_tag: beta
         tag_prefix: v
 
+    - name: Update version in files
+      run: |
+        # Remove 'v' prefix from the tag
+        VERSION=$(echo ${{ steps.tag_version.outputs.new_tag }} | sed 's/^v//')
+        # Update version in setup.py (adjust this command based on your actual file)
+        sed -i "s/version='.*'/version='$VERSION'/" setup.py
+        # If you have a __version__ in your main package file, update it too
+        sed -i "s/__version__ = '.*'/__version__ = '$VERSION'/" sfmetadataextractor/__init__.py
+
     - name: Build package
       run: python setup.py sdist bdist_wheel
 
@@ -78,9 +87,6 @@ jobs:
         body: ${{ steps.tag_version.outputs.changelog }}
         draft: false
         prerelease: ${{ steps.release_type.outputs.type == 'beta' }}
-        files: |
-          dist/*.tar.gz
-          dist/*.whl
 
     - name: Upload Release Asset
       uses: actions/upload-release-asset@v1
