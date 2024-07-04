@@ -65,6 +65,7 @@ jobs:
       run: |
         # Remove 'v' prefix from the tag
         VERSION=$(echo ${{ steps.tag_version.outputs.new_tag }} | sed 's/^v//')
+        echo %VERSION
         # Update version in setup.py (adjust this command based on your actual file)
         sed -i "s/version='.*'/version='$VERSION'/" setup.py
         # If you have a __version__ in your main package file, update it too
@@ -76,24 +77,24 @@ jobs:
     - name: List dist contents
       run: ls -l dist/
 
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ steps.tag_version.outputs.new_tag }}
-        release_name: ${{ steps.release_type.outputs.type == 'beta' && 'Beta' || 'Release' }} ${{ steps.tag_version.outputs.new_tag }}
-        body: ${{ steps.tag_version.outputs.changelog }}
-        draft: false
-        prerelease: ${{ steps.release_type.outputs.type == 'beta' }}
+    # - name: Create Release
+    #   id: create_release
+    #   uses: actions/create-release@v1
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #   with:
+    #     tag_name: ${{ steps.tag_version.outputs.new_tag }}
+    #     release_name: ${{ steps.release_type.outputs.type == 'beta' && 'Beta' || 'Release' }} ${{ steps.tag_version.outputs.new_tag }}
+    #     body: ${{ steps.tag_version.outputs.changelog }}
+    #     draft: false
+    #     prerelease: ${{ steps.release_type.outputs.type == 'beta' }}
 
-    - name: Upload Release Asset
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: dist/*
-        asset_name: my-cli-tool-${{ steps.tag_version.outputs.new_tag }}.tar.gz
-        asset_content_type: application/gzip
+    # - name: Upload Release Asset
+    #   uses: actions/upload-release-asset@v1
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #   with:
+    #     upload_url: ${{ steps.create_release.outputs.upload_url }}
+    #     asset_path: dist/*
+    #     asset_name: my-cli-tool-${{ steps.tag_version.outputs.new_tag }}.tar.gz
+    #     asset_content_type: application/gzip
