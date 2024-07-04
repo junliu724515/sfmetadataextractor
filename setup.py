@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="sfmetadataextractor",
-    version="0.1.2-beta.5",
+    version="0.1.2-beta.0",
     packages=find_packages(),
     entry_points={
         "console_scripts": [
