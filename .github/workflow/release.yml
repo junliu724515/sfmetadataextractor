@@ -1,0 +1,78 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+      - beta
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install bump2version
+
+    - name: Determine release type
+      id: release_type
+      run: |
+        if [[ "${GITHUB_REF##*/}" == "beta" ]]; then
+          echo "::set-output name=type::beta"
+        else
+          echo "::set-output name=type::stable"
+        fi
+
+    - name: Bump version and commit
+      id: bump_version
+      run: |
+        if [[ "${{ steps.release_type.outputs.type }}" == "beta" ]]; then
+          bump2version --new-version "$(python setup.py --version).beta${GITHUB_RUN_NUMBER}" --allow-dirty
+        else
+          bump2version patch --allow-dirty
+        fi
+        git config user.name "github-actions[bot]"
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git commit -am "Bump version to $(python setup.py --version)"
+        git tag -a v$(python setup.py --version) -m "Release v$(python setup.py --version)"
+        git push origin ${{ github.ref }} --tags
+
+    - name: Run tests
+      run: |
+        pytest
+
+    - name: Build package
+      run: |
+        python setup.py sdist bdist_wheel
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: v$(python setup.py --version)
+        release_name: Release v$(python setup.py --version)
+        draft: false
+        prerelease: ${{ steps.release_type.outputs.type == 'beta' }}
+
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./dist/sfmetadataextractor-$(python setup.py --version)-py3-none-any.whl
+        asset_name: sfmetadataextractor-$(python setup.py --version)-py3-none-any.whl
+        asset_content_type: application/zip
