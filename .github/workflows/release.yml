@@ -1,18 +1,20 @@
-name: Release
+name: CI/CD Pipeline
 
 on:
   push:
     branches:
       - main
-      - beta
+      - 'beta/**'
+  pull_request:
+    branches: [ main ]
 
 jobs:
-  build:
+  build-test-release:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
 
     - name: Set up Python
       uses: actions/setup-python@v4
@@ -23,38 +25,34 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-        pip install bump2version
+
+    - name: Run tests
+      run: python -m pytest
 
     - name: Determine release type
       id: release_type
       run: |
-        if [[ "${GITHUB_REF##*/}" == "beta" ]]; then
-          echo "::set-output name=type::beta"
+        if [[ ${{ github.ref }} == refs/heads/main ]]; then
+          echo "type=release" >> $GITHUB_OUTPUT
+        elif [[ ${{ github.ref }} == refs/heads/beta/* ]]; then
+          echo "type=beta" >> $GITHUB_OUTPUT
         else
-          echo "::set-output name=type::stable"
+          echo "type=development" >> $GITHUB_OUTPUT
         fi
 
-    - name: Bump version and commit
-      id: bump_version
-      run: |
-        if [[ "${{ steps.release_type.outputs.type }}" == "beta" ]]; then
-          bump2version --new-version "$(python setup.py --version).beta${GITHUB_RUN_NUMBER}" --allow-dirty
-        else
-          bump2version patch --allow-dirty
-        fi
-        git config user.name "github-actions[bot]"
-        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-        git commit -am "Bump version to $(python setup.py --version)"
-        git tag -a v$(python setup.py --version) -m "Release v$(python setup.py --version)"
-        git push origin ${{ github.ref }} --tags
-
-    - name: Run tests
-      run: |
-        pytest
+    - name: Bump version and push tag
+      id: tag_version
+      uses: mathieudutour/github-tag-action@v6.1
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        default_bump: patch
+        release_branches: main
+        pre_release_branches: beta/*
+        append_to_pre_release_tag: beta
+        tag_prefix: v
 
     - name: Build package
-      run: |
-        python setup.py sdist bdist_wheel
+      run: python setup.py sdist bdist_wheel
 
     - name: Create Release
       id: create_release
@@ -62,8 +60,9 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: v$(python setup.py --version)
-        release_name: Release v$(python setup.py --version)
+        tag_name: ${{ steps.tag_version.outputs.new_tag }}
+        release_name: ${{ steps.release_type.outputs.type == 'beta' && 'Beta' || 'Release' }} ${{ steps.tag_version.outputs.new_tag }}
+        body: ${{ steps.tag_version.outputs.changelog }}
         draft: false
         prerelease: ${{ steps.release_type.outputs.type == 'beta' }}
 
@@ -73,6 +72,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./dist/sfmetadataextractor-$(python setup.py --version)-py3-none-any.whl
-        asset_name: sfmetadataextractor-$(python setup.py --version)-py3-none-any.whl
-        asset_content_type: application/zip
+        asset_path: ./dist/*
+        asset_name: my-cli-tool-${{ steps.tag_version.outputs.new_tag }}.tar.gz
+        asset_content_type: application/gzip
