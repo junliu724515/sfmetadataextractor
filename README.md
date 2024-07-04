@@ -5,8 +5,7 @@ This is a python command line tool to split/extract components from Salesforce m
 Blog Post: https://jmcloudservices.com/blog/a-python-tool-to-upgrade-apex-wrapper-salesforce-metadata-api
 ---
 
-![Build and Test](https://github.com/junliu724515/sfmetadataextractor/.github/workflows/release.yml/badge.svg)
-![GitHub issues](https://github.com/junliu724515/sfmetadataextractor.svg)
+[![CI/CD Pipeline](https://github.com/junliu724515/sfmetadataextractor/actions/workflows/release.yml/badge.svg?branch=avoid-duplicated-fields)](https://github.com/junliu724515/sfmetadataextractor/actions/workflows/release.yml)
 
 ## Table of Contents
 
