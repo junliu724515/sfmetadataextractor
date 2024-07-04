@@ -65,16 +65,35 @@ jobs:
       run: |
         # Remove 'v' prefix from the tag
         VERSION=$(echo ${{ steps.tag_version.outputs.new_tag }} | sed 's/^v//')
+        echo $VERSION
         # Update version in setup.py (adjust this command based on your actual file)
-        sed -i "s/version='.*'/version='$VERSION'/" setup.py
+        sed -i "s/version=\".*\"/version=\"$VERSION\"/" setup.py
         # If you have a __version__ in your main package file, update it too
-        sed -i "s/__version__ = '.*'/__version__ = '$VERSION'/" sfmetadataextractor/__init__.py
+        sed -i "s/__version__ = \".*\"/__version__ = \"$VERSION\"/" sfmetadataextractor/__init__.py
 
     - name: Build package
       run: python setup.py sdist bdist_wheel
 
-    - name: List dist contents
-      run: ls -l dist/
+    - name: Set Asset Path
+      id: set_asset_path
+      run: |
+        ASSET_PATH=$(echo dist/*.whl)
+        echo $ASSET_PATH
+        echo "asset_path=$ASSET_PATH" >> $GITHUB_OUTPUT
+       
+
+    - name: Commit version changes
+      run: |
+        git config --local user.email "github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
+        git add setup.py sfmetadataextractor/__init__.py
+        git diff --quiet && git diff --staged --quiet || git commit -m "Bump version to ${{ steps.tag_version.outputs.new_tag }} [skip ci]"
+
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: ${{ github.ref }}
 
     - name: Create Release
       id: create_release
@@ -94,6 +113,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: dist/*
-        asset_name: my-cli-tool-${{ steps.tag_version.outputs.new_tag }}.tar.gz
-        asset_content_type: application/gzip
+        asset_path: ${{ steps.set_asset_path.outputs.asset_path }}
+        asset_name: sfmetadataextractor-${{ steps.tag_version.outputs.new_tag }}-py3-none-any.whl
+        asset_content_type: application/octet-stream
