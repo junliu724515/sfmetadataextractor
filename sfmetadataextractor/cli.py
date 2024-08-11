@@ -108,6 +108,7 @@ def generate_unit_test(
             "-o",
             help="The output unit test class file."),
 ):
+    """Generate unit test class for the input apex class."""
     typer.echo(f"Generating unit tests for {input_file}")
     generate_tests_handler = generate_tests.generateTests(input_file, output_file)
     generate_tests_handler.generate()
