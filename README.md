@@ -23,8 +23,16 @@ Blog Post: https://jmcloudservices.com/blog/a-python-tool-to-upgrade-apex-wrappe
 
 ## Installation
 
-**1.** Clone/Build/Install this repository:
+Option 1: Install from whl file (Recommended)
 
+Download the latest whl file from the release page and run the following command
+```bash
+pip install sfmetadataextractor-v0.1.3-py3-none-any.whl
+```
+
+Option 2: Install from source code 
+
+Clone/Build/Install this repository:
 ```bash
 git clone https://github.com/junliu724515/sfmetadataextractor.git
 
@@ -40,22 +48,6 @@ python -m pip install . (In the project folder)
  pip uninstall sfmetadataextractor
 ```
 
-**2.** Navigate to the project directory:
-
-The following files are included in this project:
-
-- README.md
-- setup.py
-- sfmetadataextractor/__init__.py
-- sfmetadataextractor/__main__.py
-- sfmetadataextractor/class_patch.py
-- sfmetadataextractor/cli.py
-- sfmetadataextractor/extension_mapping.py
-- sfmetadataextractor/extractor.py
-- sfmetadataextractor/utils.py
-- tests/__init__.py
-- tests/test_sfmetadatasplitter.py
-
 **Note:** This project requires [Python](https://www.python.org/).
 
 ---
@@ -65,7 +57,7 @@ The following files are included in this project:
 **1.** Command to extract metadata component:
 
 ```bash
-python sfmetadataextractor extract --help
+sfmetadataextractor extract --help
   Usage: python sfmetadataextractor extract [OPTIONS]
 
   Extract selected metadata types from Salesforce Metadata WSDL file.
@@ -83,7 +75,7 @@ Options:
 
 Example
 
-    python sfmetadataextractor extract -i metadata.wsdl -o metadata_extracted.wsdl -m ApexClass,CustomObject
+sfmetadataextractor extract -i metadata.wsdl -o metadata_extracted.wsdl -m ApexClass,CustomObject
 ```
 
 **2.** Command to create an extension mapping file for apex class patching:
@@ -100,10 +92,15 @@ Options:
   --help                 Show this message and exit.
 
 Example:
-   python sfmetadataextractor extensionMap -i metadata.wsdl -o extension_mapping.json
+   
+sfmetadataextractor extensionMap -i metadata.wsdl -o extension_mapping.json
 ```
 
 **3.** Command to patch apex class with extension mapping file:
+
+Reason to patch: The WSDL file may use an inheritance model that is not directly supported by the generated Apex code. 
+                 This can lead to issues where the generated code does not correctly reflect the structure and relationships defined in the WSDL. 
+                 So we need to patch the class using the extension_mapping.json file
 
 ```bash
 Usage: python sfmetadataextractor patch [OPTIONS]
@@ -121,7 +118,8 @@ Options:
   --help                       Show this message and exit.
   
 Example:
-   python sfmetadataextractor patch -e extension_mapping.json -i MetadataServiceImported.cls -o MetadataService.cls -a 58.0
+
+sfmetadataextractor patch -e extension_mapping.json -i MetadataServiceImported.cls -o MetadataService.cls -a 61.0
 ```
 
 **4.** Command to generate unit tests:
@@ -136,8 +134,8 @@ Options:
 
 
 Example:
-   python sfmetadataextractor generateUnitTests -i MetadataService.cls -o MetadataServiceTest.cls
 
+sfmetadataextractor generateUnitTests -i MetadataService.cls -o MetadataServiceTest.cls
 ```
 
 For more details, Please refer to the --help command or my blog post https://jmcloudservices.com/blog/a-python-tool-to-upgrade-apex-wrapper-salesforce-metadata-api.
