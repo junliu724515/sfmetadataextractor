@@ -4,6 +4,8 @@ This is a python command line tool to split/extract components from Salesforce m
 
 Blog Post: https://jmcloudservices.com/blog/a-python-tool-to-upgrade-apex-wrapper-salesforce-metadata-api
 
+Installation and usage video:
+
 [![How to upgrade API version](https://img.youtube.com/vi/4cC4WUGKTYc/0.jpg)](https://www.youtube.com/watch?v=4cC4WUGKTYc)
 
 ---
