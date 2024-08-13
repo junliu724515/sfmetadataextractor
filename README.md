@@ -3,6 +3,9 @@
 This is a python command line tool to split/extract components from Salesforce metadata wsdl file
 
 Blog Post: https://jmcloudservices.com/blog/a-python-tool-to-upgrade-apex-wrapper-salesforce-metadata-api
+
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/YOUTUBE_VIDEO_ID_HERE/0.jpg)](https://www.youtube.com/watch?v=4cC4WUGKTYc)
+
 ---
 
 [![CI/CD Pipeline](https://github.com/junliu724515/sfmetadataextractor/actions/workflows/release.yml/badge.svg?style=for-the-badge&logo=github)](https://github.com/junliu724515/sfmetadataextractor/actions/workflows/release.yml)
